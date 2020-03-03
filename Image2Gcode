@@ -1,0 +1,33 @@
+import cv2.cv2 as cv2
+import numpy as np
+
+# img = np.random.randint([255,255,255],256,(800,600,3), dtype=np.uint8)
+# img = img.reshape(800,600,3)
+
+# text = 'This is chinese'
+# font = cv2.FONT_HERSHEY_SIMPLEX
+# cv2.putText(img, text, (10,300), font, 2,(0,0,0), 2,lineType=cv2.LINE_AA)
+img = cv2.imread("save.jpg")
+
+img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+ret, th = cv2.threshold(img, 100, 255, cv2.THRESH_BINARY)
+
+counters, hierarchy = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+#cv2.imshow('tt', counters)
+if counters:
+    with open("result1.text","w") as f:
+        f.write("G0 X0.000000 Y0.000000 Z10.000000\n")
+        for counter in counters:
+            f.write("G1 X%f Y%f "%(counter[0][0][0],counter[0][0][1]))
+            f.write("Z0.000000\n")
+            for con in counter:
+                f.write("G1 X%f Y%f "%(con[0][0],con[0][1]))
+                f.write("Z0.000000\n")
+            f.write("G0 X%f Y%f "%(counter[0][0][0],counter[0][0][1]))
+            f.write("Z10.000000\n")
+
+cv2.imshow('ttt',th)
+
+cv2.waitKey()
+cv2.destroyAllWindows()
